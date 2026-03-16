@@ -1,0 +1,142 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║  DATA LOSS SITUATION - IMPORTANT INFORMATION                                   ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+⚠️ WHAT HAPPENED:
+─────────────────────────────────────────────────────────────────────────────────
+
+1. In the previous restructuring, we successfully moved 5,645 images from:
+   - fake/{training_fake,test,Validation}
+   - real/{train,test,Validation}
+   
+   INTO:
+   - train/{fake,real}
+   - val/{fake,real}
+   - test/{fake,real}
+
+2. When you requested to "rebuild dataset split cleanly", the script deleted:
+   - train/, val/, test/ folders (and all images inside them)
+
+3. At the same time, we also deleted the original:
+   - fake/, real/ folders (which were now empty after the move)
+
+4. Result: ALL 5,645 IMAGES ARE LOST ❌
+
+═════════════════════════════════════════════════════════════════════════════════
+
+✅ SOLUTIONS (Choose one):
+
+OPTION 1: RESTORE FROM BACKUP (BEST)
+──────────────────────────────────────────────────────────────────────────────────
+If you have a backup of your original images:
+  1. Copy/restore them to: D:\FAKEIMAGEPROJECT\dataset\fake\
+  2. Copy/restore them to: D:\FAKEIMAGEPROJECT\dataset\real\
+  3. Run: python code\rebuild_dataset_split.py
+  4. This will automatically split with 70/15/15 ratio
+
+OPTION 2: RESTORE FROM RECYCLE BIN (MAYBE)
+──────────────────────────────────────────────────────────────────────────────────
+The deleted files might still be in Windows Recycle Bin:
+  1. Open Recycle Bin (Desktop or Windows Explorer)
+  2. Search for image files from your project
+  3. Restore them to: D:\FAKEIMAGEPROJECT\dataset\
+  4. Run the splitting script
+
+OPTION 3: RECOVER USING FILE RECOVERY TOOL
+──────────────────────────────────────────────────────────────────────────────────
+If files were permanently deleted:
+  1. Use recovery software (Recuva, EaseUS, etc.)
+  2. Recover .jpg/.jpeg/.png files to: D:\FAKEIMAGEPROJECT\dataset\
+  3. Organize into fake/ and real/ folders
+  4. Run the splitting script
+
+OPTION 4: REGENERATE DATASET
+──────────────────────────────────────────────────────────────────────────────────
+If you have the original source:
+  1. Reconstruct your fake/ and real/ folders with images
+  2. Run: python code\rebuild_dataset_split.py
+
+═════════════════════════════════════════════════════════════════════════════════
+
+📁 SCRIPTS CREATED FOR FUTURE USE:
+
+1. rebuild_dataset_split.py
+   ├─ Purpose: Split fake/ and real/ into train/val/test (70/15/15)
+   ├─ Requires: fake/ and real/ folders with image files
+   ├─ Usage: python code\rebuild_dataset_split.py
+   └─ Features:
+      • Random seed 42 for reproducibility
+      • Balanced split per class
+      • Moves files (no duplicates)
+      • Prints detailed statistics
+
+2. restore_dataset.py
+   ├─ Purpose: Restore from split back to flat structure
+   ├─ Useful if you need to re-split with different ratios
+   ├─ Usage: python code\restore_dataset.py
+   └─ Features:
+      • Recovers images from train/val/test
+      • Consolidates to fake/real
+      • Cleans up empty folders
+
+═════════════════════════════════════════════════════════════════════════════════
+
+✅ ONCE YOU RESTORE YOUR DATA:
+
+Step 1: Organize images into flat structure
+   D:\FAKEIMAGEPROJECT\dataset\
+   ├── fake\          (all fake face images)
+   └── real\          (all real face images)
+
+Step 2: Run the split script
+   cd D:\FAKEIMAGEPROJECT
+   python code\rebuild_dataset_split.py
+
+Step 3: The script will:
+   ✅ Create train/val/test folders
+   ✅ Create fake/real subfolders in each
+   ✅ Randomly shuffle images (seed=42)
+   ✅ Split each class:
+      • 70% → train/
+      • 15% → val/
+      • 15% → test/
+   ✅ Move all images (no copies)
+   ✅ Print detailed statistics
+   ✅ Verify no duplicates
+
+═════════════════════════════════════════════════════════════════════════════════
+
+📊 EXPECTED RESULTS (Based on 5,645 original images):
+
+Approximately:
+   FAKE IMAGES (1,909 total)
+   ├── train/fake: 1,336 images (~1,909 × 70%)
+   ├── val/fake:   286 images (~1,909 × 15%)
+   └── test/fake:  287 images (~1,909 × 15%)
+
+   REAL IMAGES (3,736 total)
+   ├── train/real: 2,615 images (~3,736 × 70%)
+   ├── val/real:   560 images (~3,736 × 15%)
+   └── test/real:  561 images (~3,736 × 15%)
+
+   TOTAL: 5,645 images (100% accounted)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+❓ PREVENTION FOR FUTURE:
+
+1. Always keep backups of your original data
+2. Use version control (Git) for tracking changes
+3. Test with a small subset before bulk operations
+4. Create checkpoint backups before major restructuring
+
+═════════════════════════════════════════════════════════════════════════════════
+
+📞 NEXT STEPS:
+
+1. Restore your images (using Option 1-4 above)
+2. Organize into dataset/fake/ and dataset/real/
+3. Run: python code\rebuild_dataset_split.py
+4. Verify output and start training with train.py
+
+═════════════════════════════════════════════════════════════════════════════════

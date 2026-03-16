@@ -1,0 +1,378 @@
+"""
+STEP-BY-STEP EXECUTION GUIDE
+Real vs Fake Face Detection - PyTorch Training Pipeline
+
+THIS GUIDE ASSUMES YOU ARE A BEGINNER
+"""
+
+# ============================================================================
+# PREREQUISITE CHECKS
+# ============================================================================
+
+"""
+Before starting, verify your environment:
+
+1. Python Version
+   Open PowerShell and run:
+   python --version
+   
+   Expected: Python 3.13.x
+
+2. PyTorch Installation
+   python -c "import torch; print(f'PyTorch {torch.__version__}'); print(f'CUDA Available: {torch.cuda.is_available()}')"
+   
+   Expected: PyTorch 2.10.0+cpu (or your version)
+
+3. Project Structure
+   Your folder should look like:
+   
+   D:\FAKEIMAGEPROJECT\
+   ├── code\
+   │   ├── train.py                  (new)
+   │   ├── restructure_dataset.py    (new)
+   │   ├── mytest123.py
+   │   └── test.py
+   ├── dataset\
+   │   ├── fake\
+   │   │   ├── training_fake\        (images here)
+   │   │   ├── test\                 (images here)
+   │   │   └── Validation\           (images here)
+   │   └── real\
+   │       ├── train\                (images here)
+   │       ├── test\                 (images here)
+   │       └── Validation\           (images here)
+   
+   If this structure doesn't match, create the missing folders manually.
+"""
+
+# ============================================================================
+# STEP 1: RESTRUCTURE YOUR DATASET
+# ============================================================================
+
+"""
+Your current dataset structure has subfolders (training_fake, test, Validation)
+The training script expects a simpler structure: train/fake, train/real, etc.
+
+👉 ACTION: Restructure the dataset
+
+1. Open PowerShell (Windows key + type "PowerShell")
+
+2. Navigate to your project:
+   cd D:\FAKEIMAGEPROJECT
+
+3. Run the restructuring script:
+   python code\restructure_dataset.py
+
+4. When prompted "Continue with restructuring? (yes/no):", type: yes
+
+   Expected output:
+   ✅ Creating target directories...
+   ✅ Moving files...
+   ✅ Final Dataset Structure
+      train/fake          500 images
+      train/real          500 images
+      val/fake            100 images
+      val/real            100 images
+      test/fake           50 images
+      test/real           50 images
+   ✅ Restructuring completed successfully!
+
+⚠️ IMPORTANT: 
+   - This script MOVES files, not copies them
+   - Once moved, the old structure (fake/training_fake, etc.) will be empty
+   - This is normal and expected
+   - If something goes wrong, you can manually restore files if you have backups
+
+⏱️ TIME ESTIMATE: 2-5 minutes depending on file size
+"""
+
+# ============================================================================
+# STEP 2: VERIFY THE NEW STRUCTURE (OPTIONAL BUT RECOMMENDED)
+# ============================================================================
+
+"""
+After restructuring, verify the new structure was created correctly.
+
+👉 ACTION: Open File Explorer and check
+
+1. Open File Explorer (Windows key + E)
+
+2. Navigate to: D:\FAKEIMAGEPROJECT\dataset\
+
+3. You should see:
+   D:\FAKEIMAGEPROJECT\dataset\
+   ├── train\
+   │   ├── fake\     (contains images)
+   │   └── real\     (contains images)
+   ├── val\
+   │   ├── fake\     (contains images)
+   │   └── real\     (contains images)
+   └── test\
+       ├── fake\     (contains images)
+       └── real\     (contains images)
+
+4. Check that each folder contains .jpg or .png files
+
+✅ If you see this structure, you're ready for training!
+"""
+
+# ============================================================================
+# STEP 3: RUN THE TRAINING SCRIPT
+# ============================================================================
+
+"""
+Now you're ready to train the model!
+
+👉 ACTION: Train the model
+
+1. In PowerShell, make sure you're in the project root:
+   cd D:\FAKEIMAGEPROJECT
+
+2. Run the training script:
+   python code\train.py
+
+3. The script will:
+   ✅ Validate dataset structure
+   ✅ Load all datasets (train, val, test)
+   ✅ Create ResNet18 model
+   ✅ Train for 5 epochs
+   ✅ Print validation accuracy after each epoch
+   ✅ Save the best model to: D:\FAKEIMAGEPROJECT\best_model.pth
+
+   Expected output will look like:
+   
+   🚀 REAL vs FAKE FACE DETECTION - TRAINING
+   ═══════════════════════════════════════════════════════════════════════
+   Configuration:
+     Device: cpu
+     Batch Size: 32
+     Learning Rate: 0.001
+     Epochs: 5
+     Image Size: 224x224
+   
+   📊 VALIDATING DATASET STRUCTURE
+     ✅ Train/Fake   :  500 images
+     ✅ Train/Real   :  500 images
+     ✅ Val/Fake     :  100 images
+     ✅ Val/Real     :  100 images
+     ✅ Test/Fake    :   50 images
+     ✅ Test/Real    :   50 images
+   
+   📦 LOADING DATASETS
+   ✅ Training Dataset
+      Classes: ['fake', 'real']
+      Total images: 1000
+   
+   ✅ Validation Dataset
+      Classes: ['fake', 'real']
+      Total images: 200
+   
+   🧠 CREATING MODEL
+   ✅ Model Architecture:
+      Base: ResNet18 (ImageNet pretrained)
+      Final layer input features: 512
+      Final layer output: 1 (binary classification)
+      Loss function: BCEWithLogitsLoss
+   
+   🎓 TRAINING
+   ═══════════════════════════════════════════════════════════════════════
+   
+   Epoch 1/5
+   ───────────────────────────────────────────────────────────────────────
+      Batch 1/32, Loss: 0.6234
+      Batch 11/32, Loss: 0.5123
+      Batch 21/32, Loss: 0.4456
+   
+      Training   Loss: 0.5234, Accuracy: 0.7123
+      Validation Loss: 0.4987, Accuracy: 0.7456
+      Time: 45.23s
+      💾 Best model saved!
+   
+   ...continuing for epochs 2-5...
+   
+   🧪 TESTING
+   ═══════════════════════════════════════════════════════════════════════
+   ✅ Test Accuracy: 0.7850
+
+⏱️ TIME ESTIMATE: 
+   - CPU (no GPU): 5-10 minutes per epoch (~25-50 minutes total)
+   - GPU: 1-2 minutes per epoch (~5-10 minutes total)
+
+💾 SAVED MODEL:
+   After training completes, a file will be created:
+   D:\FAKEIMAGEPROJECT\best_model.pth
+   
+   This is your trained model that you can use for inference later!
+"""
+
+# ============================================================================
+# STEP 4: WHAT TO DO IF SOMETHING GOES WRONG
+# ============================================================================
+
+"""
+PROBLEM 1: "ModuleNotFoundError: No module named 'torch'"
+→ Solution: PyTorch not installed. Run:
+   pip install torch torchvision
+
+PROBLEM 2: "Error loading dataset" or "Missing required directories"
+→ Solution: Restructure script didn't complete. Run Step 1 again:
+   python code\restructure_dataset.py
+
+PROBLEM 3: "num_workers" error on Windows
+→ This is normal for Windows. The script already sets num_workers=0 to fix this.
+→ If you still get errors, the script will handle it automatically.
+
+PROBLEM 4: Out of memory error (OOM)
+→ Solution: Reduce batch size in train.py (change BATCH_SIZE = 16 instead of 32)
+
+PROBLEM 5: Script runs very slowly
+→ This is normal on CPU. If it takes >10 minutes per epoch, consider:
+   - Reducing number of epochs (change NUM_EPOCHS = 2)
+   - Reducing image size (change IMAGE_SIZE = 128)
+   - Reducing batch size (change BATCH_SIZE = 16)
+
+PROBLEM 6: KeyboardInterrupt (Ctrl+C) - need to stop training
+→ This is safe. You can run the script again and it will continue.
+"""
+
+# ============================================================================
+# BEST PRACTICES FOR WINDOWS PowerShell
+# ============================================================================
+
+"""
+✅ DO:
+1. Run commands from project root (D:\FAKEIMAGEPROJECT)
+2. Use absolute paths in Python scripts (script already does this)
+3. Use forward slashes / or pathlib.Path (script already does this)
+4. Keep file/folder names simple (no spaces if possible)
+5. Use python instead of python.exe
+
+❌ DON'T:
+1. Use cd to change into code/ directory before running scripts
+2. Use relative paths like ../dataset
+3. Use backslashes \ in path strings in Python code
+4. Have spaces in Python file names or dataset folders
+5. Use python -m to run scripts
+
+✅ COMMAND TEMPLATE (Always use this format):
+   cd D:\FAKEIMAGEPROJECT
+   python code\<script_name>.py
+
+❌ WRONG:
+   cd D:\FAKEIMAGEPROJECT\code
+   python mytest123.py    (relative path will be wrong!)
+"""
+
+# ============================================================================
+# UNDERSTANDING THE SCRIPTS
+# ============================================================================
+
+"""
+SCRIPT 1: restructure_dataset.py
+─────────────────────────────────────────────────────────────────────────
+Purpose: Reorganize your dataset into the format PyTorch expects
+
+What it does:
+  1. Checks all source directories exist
+  2. Creates new train/val/test directories
+  3. Moves all images from old structure to new structure
+  4. Prints statistics of what was moved
+  5. Verifies the final structure
+
+Key functions:
+  - setup_paths(): Get absolute paths using script location
+  - restructure_dataset(): Main restructuring logic
+  - Uses pathlib.Path for Windows compatibility
+  - Uses shutil.move() to safely move files
+
+
+SCRIPT 2: train.py
+─────────────────────────────────────────────────────────────────────────
+Purpose: Train a ResNet18 model for real vs fake face detection
+
+What it does:
+  1. Validates dataset structure
+  2. Loads datasets with proper transforms
+  3. Creates ResNet18 model
+  4. Trains for 5 epochs
+  5. Validates after each epoch
+  6. Saves best model
+  7. Tests on test set
+
+Key components:
+  - Config class: All training parameters
+  - get_transforms(): Image preprocessing with ImageNet normalization
+  - create_model(): ResNet18 with binary output
+  - train_epoch(): Training loop
+  - validate_epoch(): Validation loop
+  - test_model(): Final testing
+
+Model details:
+  - Architecture: ResNet18 (pretrained on ImageNet)
+  - Final layer: 1 output (binary: real=1, fake=0)
+  - Loss: BCEWithLogitsLoss (combines sigmoid + BCE for stability)
+  - Optimizer: Adam with learning rate 0.001
+"""
+
+# ============================================================================
+# NEXT STEPS AFTER TRAINING
+# ============================================================================
+
+"""
+After your model trains successfully:
+
+1. VIEW RESULTS
+   - Check the printed accuracy metrics
+   - Best Validation Accuracy tells you how well the model generalizes
+   - Test Accuracy tells you how well it performs on unseen data
+
+2. SAVE RESULTS (optional)
+   - Copy best_model.pth somewhere safe
+   - Export training metrics/logs
+   
+3. IMPROVE THE MODEL
+   - Increase epochs (change NUM_EPOCHS = 10)
+   - Try different learning rates (change LEARNING_RATE = 1e-4)
+   - Add more data augmentation in get_transforms()
+   - Use a deeper model (ResNet50 instead of ResNet18)
+   
+4. USE THE MODEL FOR PREDICTION
+   - Load best_model.pth
+   - Run inference on new images
+   - Create a prediction script
+
+5. TROUBLESHOOT LOW ACCURACY
+   - Check if dataset images are correct
+   - Verify class labels are correct
+   - Try different hyperparameters
+   - Increase training data
+"""
+
+# ============================================================================
+# COMPLETE COMMAND REFERENCE
+# ============================================================================
+
+"""
+Copy-paste these commands into PowerShell to run everything:
+
+## STEP 1: Navigate to project root
+cd D:\FAKEIMAGEPROJECT
+
+## STEP 2: Check Python and PyTorch
+python --version
+python -c "import torch; print(torch.__version__)"
+
+## STEP 3: Restructure dataset
+python code\restructure_dataset.py
+
+## STEP 4: Train the model
+python code\train.py
+
+## OPTIONAL: Check if model was saved
+ls *.pth
+
+## OPTIONAL: View dataset structure
+ls dataset\train
+ls dataset\val
+ls dataset\test
+"""

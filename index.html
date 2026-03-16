@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fake Image Detector</title>
+    <meta name="description" content="Verify image authenticity with AI-powered detection. Upload an image to check if it's real or fake.">
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Subtle Gradient Mesh Background -->
+    <div class="bg-mesh" aria-hidden="true"></div>
+
+    <!-- Main Application -->
+    <main class="container">
+        <div class="app-card">
+
+            <!-- Header -->
+            <header class="app-header">
+                <div class="logo-mark">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <div class="badge">
+                    <span class="badge-dot"></span>
+                    AI-Powered
+                </div>
+                <h1>Fake Image <span class="accent">Detector</span></h1>
+                <p class="subtitle">Upload an image to verify its authenticity using AI</p>
+            </header>
+
+            <!-- Upload -->
+            <section class="upload-section">
+                <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Upload image area">
+                    <input type="file" id="file-input" accept="image/*" hidden>
+
+                    <div class="drop-content" id="drop-content">
+                        <div class="upload-icon-wrapper">
+                            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <p class="drop-title">Drag & drop your image here</p>
+                        <p class="text-sm">or</p>
+                        <button type="button" class="btn-secondary" id="browse-btn">Browse Files</button>
+                        <p class="text-xs">Supports PNG, JPG, WEBP up to 10 MB</p>
+                    </div>
+
+                    <div id="preview-container" class="preview-container hidden">
+                        <img id="image-preview" src="" alt="Uploaded image preview">
+                        <button type="button" class="btn-remove" id="remove-btn" aria-label="Remove image" title="Remove image">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Action -->
+            <section class="action-section">
+                <button id="analyze-btn" class="btn-primary" disabled>
+                    <span class="btn-text">Analyze Image</span>
+                    <span class="spinner hidden" aria-hidden="true"></span>
+                </button>
+            </section>
+
+            <!-- Result -->
+            <section id="result-section" class="result-section hidden">
+                <div class="result-card" id="result-card">
+                    <div class="result-icon" id="result-icon" aria-hidden="true"></div>
+                    <h3 class="result-label">Analysis Result</h3>
+                    <div id="prediction-result" class="prediction-text"></div>
+                    <div id="confidence-section" class="confidence-section hidden">
+                        <div class="confidence-header">
+                            <span class="confidence-label">Confidence</span>
+                            <span class="confidence-value" id="confidence-value">0%</span>
+                        </div>
+                        <div class="confidence-track">
+                            <div class="confidence-bar" id="confidence-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <a href="http://127.0.0.1:8000/docs#/default/predict_predict_post" target="_blank" rel="noopener noreferrer">
+            View FastAPI Documentation →
+        </a>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

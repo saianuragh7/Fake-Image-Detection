@@ -1,0 +1,365 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║  CLEAN DATASET SPLIT GUIDE - After Data Restoration                           ║
+║  70% Train / 15% Validation / 15% Test Split                                  ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+
+📋 OVERVIEW
+═════════════════════════════════════════════════════════════════════════════════
+
+You have 2 Python scripts to help rebuild your dataset cleanly:
+
+1. rebuild_dataset_split.py (PRIMARY - for splitting)
+2. restore_dataset.py (SECONDARY - for recovery from splits)
+
+
+🎯 YOUR GOAL
+═════════════════════════════════════════════════════════════════════════════════
+
+Transform dataset structure from:
+
+  BEFORE (Flat):              AFTER (Split):
+  ──────────────              ───────────────
+  dataset/                    dataset/
+  ├── fake/                   ├── train/
+  │   ├── img1.jpg            │   ├── fake/ (70% of fake)
+  │   ├── img2.jpg            │   └── real/ (70% of real)
+  │   └── ...                 ├── val/
+  └── real/                   │   ├── fake/ (15% of fake)
+      ├── img1.jpg            │   └── real/ (15% of real)
+      ├── img2.jpg            └── test/
+      └── ...                     ├── fake/ (15% of fake)
+                                  └── real/ (15% of real)
+
+
+✅ STEP-BY-STEP INSTRUCTIONS
+═════════════════════════════════════════════════════════════════════════════════
+
+STEP 1: Restore your images
+──────────────────────────────────────────────────────────────────────────────────
+
+Create this structure (choose your restoration method):
+
+  D:\FAKEIMAGEPROJECT\dataset\
+  ├── fake\              (all your FAKE face images)
+  │   ├── img1.jpg
+  │   ├── img2.jpg
+  │   └── ... (1000s of fake images)
+  │
+  └── real\              (all your REAL face images)
+      ├── img1.jpg
+      ├── img2.jpg
+      └── ... (1000s of real images)
+
+⚠️ IMPORTANT:
+  • fake/ should contain ONLY image files
+  • real/ should contain ONLY image files
+  • NO subfolders inside fake/ or real/
+  • All images in fake/ will be labeled as "fake" class
+  • All images in real/ will be labeled as "real" class
+
+
+STEP 2: Verify images are in place
+──────────────────────────────────────────────────────────────────────────────────
+
+Open PowerShell and check:
+
+  cd D:\FAKEIMAGEPROJECT\dataset
+  
+  # Count fake images
+  (ls fake\*.jpg | measure-object).count
+  (ls fake\*.jpeg | measure-object).count
+  (ls fake\*.png | measure-object).count
+  
+  # Count real images
+  (ls real\*.jpg | measure-object).count
+  (ls real\*.jpeg | measure-object).count
+  (ls real\*.png | measure-object).count
+
+Both should show image counts > 0
+
+
+STEP 3: Run the split script
+──────────────────────────────────────────────────────────────────────────────────
+
+In PowerShell:
+
+  cd D:\FAKEIMAGEPROJECT
+  python code\rebuild_dataset_split.py
+
+This will:
+  1. Read all images from fake/ and real/
+  2. Delete any existing train/val/test folders
+  3. Create new train/val/test structure
+  4. Randomly shuffle images (seed=42 for reproducibility)
+  5. Split each class:
+     - fake images: 70% train, 15% val, 15% test
+     - real images: 70% train, 15% val, 15% test
+  6. Move images to their splits
+  7. Print detailed statistics
+  8. Verify totals match original
+
+
+STEP 4: Verify the split
+──────────────────────────────────────────────────────────────────────────────────
+
+Check the final structure:
+
+  cd D:\FAKEIMAGEPROJECT\dataset
+  
+  # Show directory tree
+  tree /L
+  
+  # Count files in each folder
+  (ls train\fake\* | measure-object).count    # Should be ~70% of fake images
+  (ls train\real\* | measure-object).count    # Should be ~70% of real images
+  (ls val\fake\* | measure-object).count      # Should be ~15% of fake images
+  (ls val\real\* | measure-object).count      # Should be ~15% of real images
+  (ls test\fake\* | measure-object).count     # Should be ~15% of fake images
+  (ls test\real\* | measure-object).count     # Should be ~15% of real images
+
+
+STEP 5: Start training
+──────────────────────────────────────────────────────────────────────────────────
+
+Once split is verified:
+
+  cd D:\FAKEIMAGEPROJECT
+  python code\train.py
+
+
+═════════════════════════════════════════════════════════════════════════════════
+
+📊 WHAT THE SPLIT SCRIPT DOES
+═════════════════════════════════════════════════════════════════════════════════
+
+INPUT:
+  • fake/ folder with N fake images
+  • real/ folder with M real images
+
+PROCESSING:
+  1. Count images in fake/ → get N
+  2. Count images in real/ → get M
+  3. For FAKE images:
+     - Shuffle randomly (seed=42)
+     - Select first 0.70×N → train/fake
+     - Select next 0.15×N → val/fake
+     - Remaining → test/fake
+  4. For REAL images:
+     - Shuffle randomly (seed=42)
+     - Select first 0.70×M → train/real
+     - Select next 0.15×M → val/real
+     - Remaining → test/real
+  5. Move images (not copy) to target folders
+
+OUTPUT:
+  ✅ train/fake/, train/real/ (70% of data)
+  ✅ val/fake/, val/real/ (15% of data)
+  ✅ test/fake/, test/real/ (15% of data)
+  ✅ Detailed statistics printed
+  ✅ Original fake/ and real/ may be empty (safe to delete)
+
+
+═════════════════════════════════════════════════════════════════════════════════
+
+🔍 EXPECTED OUTPUT FROM SCRIPT
+═════════════════════════════════════════════════════════════════════════════════
+
+When you run: python code\rebuild_dataset_split.py
+
+You'll see something like:
+
+  ======================================================================
+  🔄 DATASET SPLIT REBUILDER
+  ======================================================================
+  
+  Project Root: D:\FAKEIMAGEPROJECT
+  Dataset Path: D:\FAKEIMAGEPROJECT\dataset
+  
+  STEP 1: Checking source data
+  ──────────────────────────────
+  📂 fake/ folder: 1909 images
+  📂 real/ folder: 3736 images
+  📊 Total images: 5645
+  
+  STEP 2: Cleaning up old split folders
+  ──────────────────────────────────────
+  [... deletes existing folders ...]
+  
+  STEP 3: Creating new folder structure
+  ──────────────────────────────────────
+  ✅ Created:
+     train/fake/, train/real/
+     val/fake/, val/real/
+     test/fake/, test/real/
+  
+  STEP 4: Processing FAKE images
+  ───────────────────────────────
+  📊 Total fake images: 1909
+  Random seed: 42 (reproducible)
+  
+  ✂️  Split ratio (70/15/15):
+     Train: 1336 images (70.0%)
+     Val:   286 images (15.0%)
+     Test:  287 images (15.0%)
+  
+  🚚 Moving fake images...
+     ✅ train/fake: 1336 images moved
+     ✅ val/fake: 286 images moved
+     ✅ test/fake: 287 images moved
+  
+  STEP 5: Processing REAL images
+  ───────────────────────────────
+  📊 Total real images: 3736
+  Random seed: 42 (reproducible)
+  
+  ✂️  Split ratio (70/15/15):
+     Train: 2615 images (70.0%)
+     Val:   560 images (15.0%)
+     Test:  561 images (15.0%)
+  
+  🚚 Moving real images...
+     ✅ train/real: 2615 images moved
+     ✅ val/real: 560 images moved
+     ✅ test/real: 561 images moved
+  
+  STEP 6: Verifying cleanup
+  ──────────────────────────
+  ✅ All images successfully moved (no leftovers)
+  
+  ======================================================================
+  ✅ FINAL DATASET STRUCTURE
+  ======================================================================
+  
+  📊 TRAINING SET:
+     train/fake:  1336 images
+     train/real:  2615 images
+     Subtotal:    3951 images (70.0%)
+  
+  📊 VALIDATION SET:
+     val/fake:     286 images
+     val/real:     560 images
+     Subtotal:     846 images (15.0%)
+  
+  📊 TEST SET:
+     test/fake:    287 images
+     test/real:    561 images
+     Subtotal:     848 images (15.0%)
+  
+  ──────────────────────────────
+  ✅ TOTAL IMAGES: 5645
+  ──────────────────────────────
+  ✅ Total matches original: 5645 images
+  ✅ No duplicate images (each appears in exactly one split)
+  
+  ======================================================================
+  🎉 DATASET REBUILD COMPLETE!
+  ======================================================================
+  
+  ✅ Dataset is ready for training!
+     Run: python code\train.py
+
+
+═════════════════════════════════════════════════════════════════════════════════
+
+✅ KEY FEATURES OF THE SPLIT
+═════════════════════════════════════════════════════════════════════════════════
+
+✓ Random Seed = 42
+  → Same results every time you run (reproducible)
+  → Different from previous split (fresh split)
+
+✓ Balanced Split Per Class
+  → fake images: 70% train, 15% val, 15% test
+  → real images: 70% train, 15% val, 15% test
+  → Both classes get same treatment
+
+✓ No Duplicates
+  → Each image appears in exactly one split
+  → No file copying (moves only)
+
+✓ No Leftover Files
+  → All images from fake/ and real/ are moved
+  → Original directories become empty (safe to delete)
+
+✓ Detailed Statistics
+  → Count for each split
+  → Percentages for verification
+  → Total check to ensure nothing lost
+
+
+═════════════════════════════════════════════════════════════════════════════════
+
+⚠️ IMPORTANT NOTES
+═════════════════════════════════════════════════════════════════════════════════
+
+1. SEED 42 MEANS REPRODUCIBILITY
+   • Run the script multiple times = same split
+   • Useful for consistent results across runs
+   • If you want different random split, modify seed in script
+
+2. MOVES, NOT COPIES
+   • Files are moved, not copied
+   • No duplicate disk space needed
+   • Original fake/ and real/ become empty after split
+
+3. CLASS LABELS FROM FOLDER NAMES
+   • Images in fake/ are labeled "fake" class
+   • Images in real/ are labeled "real" class
+   • PyTorch ImageFolder uses folder names as labels
+
+4. SPLIT HAPPENS PER CLASS
+   • Each class (fake/real) independently shuffled
+   • Each class independently split 70/15/15
+   • No class mixing
+
+5. READY FOR TRAINING
+   • After split, run: python code\train.py
+   • Trainer will load train/val/test sets
+   • Train on 70%, validate on 15%, test on 15%
+
+
+═════════════════════════════════════════════════════════════════════════════════
+
+❓ TROUBLESHOOTING
+═════════════════════════════════════════════════════════════════════════════════
+
+Q: Script says "No images found"
+A: Make sure images are in:
+   D:\FAKEIMAGEPROJECT\dataset\fake\*.jpg
+   D:\FAKEIMAGEPROJECT\dataset\real\*.jpg
+   Check file extensions (.jpg, .jpeg, .png)
+
+Q: Script moved files but some are missing
+A: Check both source and split folders for leftover images
+   Run: find-item -Recurse -Filter "*.jpg"
+
+Q: Want different split ratio (e.g., 80/10/10)
+A: Edit rebuild_dataset_split.py
+   Change:
+     TRAIN_RATIO = 0.80
+     VAL_RATIO = 0.10
+     TEST_RATIO = 0.10
+
+Q: Want different random seed (not 42)
+A: Edit rebuild_dataset_split.py
+   Change:
+     random.seed(42) → random.seed(123)
+
+Q: Need to restore and try again
+A: Run: python code\restore_dataset.py
+   This moves files back from split to flat structure
+
+
+═════════════════════════════════════════════════════════════════════════════════
+
+✅ SUMMARY
+═════════════════════════════════════════════════════════════════════════════════
+
+1. Restore images to dataset/fake/ and dataset/real/
+2. Run: python code\rebuild_dataset_split.py
+3. Wait for completion (prints statistics)
+4. Verify counts in each split
+5. Run: python code\train.py to start training
+
+That's it! The split handles everything automatically.

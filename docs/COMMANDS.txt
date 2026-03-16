@@ -1,0 +1,346 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║  COPY-PASTE COMMANDS - Just paste these into PowerShell                        ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+
+PREREQUISITES
+═════════════════════════════════════════════════════════════════════════════════
+
+Before you start, verify these are installed:
+
+Command 1: Check Python version
+───────────────────────────────────────────────────────────────────────────────
+python --version
+
+Expected output: Python 3.13.x
+
+---
+
+Command 2: Check PyTorch is installed
+───────────────────────────────────────────────────────────────────────────────
+python -c "import torch; print(f'PyTorch {torch.__version__}'); print(f'CUDA: {torch.cuda.is_available()}')"
+
+Expected output: PyTorch 2.10.0+cpu (or similar)
+
+---
+
+Command 3: If PyTorch is NOT installed
+───────────────────────────────────────────────────────────────────────────────
+pip install torch torchvision
+
+Wait for installation to complete.
+
+---
+
+
+TRAINING PIPELINE - 3 EASY STEPS
+═════════════════════════════════════════════════════════════════════════════════
+
+Step 1: Navigate to project
+───────────────────────────────────────────────────────────────────────────────
+cd D:\FAKEIMAGEPROJECT
+
+Expected: PowerShell shows "PS D:\FAKEIMAGEPROJECT>"
+
+---
+
+Step 2: Restructure dataset (ONE TIME ONLY)
+───────────────────────────────────────────────────────────────────────────────
+python code\restructure_dataset.py
+
+When you see: "Continue with restructuring? (yes/no):"
+Type: yes
+
+Wait for completion. Expected output:
+  ✅ Restructuring completed successfully!
+  Final Dataset Structure:
+    train/fake          500 images
+    train/real          500 images
+    val/fake            100 images
+    val/real            100 images
+    test/fake            50 images
+    test/real            50 images
+
+⏱️ Time: ~5 minutes
+
+---
+
+Step 3: Train the model
+───────────────────────────────────────────────────────────────────────────────
+python code\train.py
+
+Wait for training to complete. You'll see:
+
+  Epoch 1/5
+     Training   Loss: 0.5234, Accuracy: 0.7123
+     Validation Loss: 0.4987, Accuracy: 0.7456
+     Time: 45.23s
+
+  Epoch 2/5
+  ...
+
+  ✅ Test Accuracy: 0.8150
+  ✅ Best Model saved: best_model.pth
+
+⏱️ Time: ~25-50 minutes on CPU
+
+---
+
+
+COMBINED COMMAND (Run everything at once)
+═════════════════════════════════════════════════════════════════════════════════
+
+If you want to run the restructuring in one command:
+
+cd D:\FAKEIMAGEPROJECT && python code\restructure_dataset.py
+
+Note: You still need to answer "yes" when prompted.
+
+---
+
+
+AFTER TRAINING - VERIFICATION
+═════════════════════════════════════════════════════════════════════════════════
+
+Command: Check if model was saved
+───────────────────────────────────────────────────────────────────────────────
+ls *.pth
+
+Expected output:
+    Directory: D:\FAKEIMAGEPROJECT
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           2/23/2026 2:45 PM        45678234 best_model.pth
+
+---
+
+Command: Check dataset structure after restructuring
+───────────────────────────────────────────────────────────────────────────────
+ls dataset\train, dataset\val, dataset\test
+
+Expected output:
+Directory: D:\FAKEIMAGEPROJECT\dataset\train
+    fake/
+    real/
+
+Directory: D:\FAKEIMAGEPROJECT\dataset\val
+    fake/
+    real/
+
+Directory: D:\FAKEIMAGEPROJECT\dataset\test
+    fake/
+    real/
+
+---
+
+
+TROUBLESHOOTING COMMANDS
+═════════════════════════════════════════════════════════════════════════════════
+
+If you get "ModuleNotFoundError: No module named 'torch'":
+───────────────────────────────────────────────────────────────────────────────
+pip install torch torchvision
+
+---
+
+If you get "Missing required directories" error:
+───────────────────────────────────────────────────────────────────────────────
+# Make sure you ran step 2 (restructure_dataset.py)
+# Then try training again
+python code\train.py
+
+---
+
+If you want to check what Python version the script is using:
+───────────────────────────────────────────────────────────────────────────────
+python -c "import sys; print(sys.executable); print(sys.version)"
+
+---
+
+If you want to count how many images are in each folder:
+───────────────────────────────────────────────────────────────────────────────
+# Count files in train/fake
+(ls dataset\train\fake | measure-object).count
+
+# Count files in train/real
+(ls dataset\train\real | measure-object).count
+
+# etc for val and test
+
+---
+
+If training is running too slowly and you want to stop it:
+───────────────────────────────────────────────────────────────────────────────
+Press: Ctrl + C
+
+This safely stops the training. You can run it again later.
+
+---
+
+
+ADVANCED - CUSTOMIZING THE TRAINING
+═════════════════════════════════════════════════════════════════════════════════
+
+To train for more epochs, edit train.py:
+
+1. Open file: code\train.py in VS Code
+2. Find line: NUM_EPOCHS = 5
+3. Change to: NUM_EPOCHS = 10  (or any number)
+4. Save file (Ctrl + S)
+5. Run: python code\train.py
+
+---
+
+To increase batch size (if you have more memory):
+
+1. Open file: code\train.py
+2. Find line: BATCH_SIZE = 32
+3. Change to: BATCH_SIZE = 64
+4. Save file
+5. Run: python code\train.py
+
+---
+
+To change learning rate:
+
+1. Open file: code\train.py
+2. Find line: LEARNING_RATE = 1e-3
+3. Change to: LEARNING_RATE = 1e-4  (smaller = slower training but might be better)
+4. Save file
+5. Run: python code\train.py
+
+---
+
+
+ONE-LINER - Complete execution
+═════════════════════════════════════════════════════════════════════════════════
+
+If you want to type everything in one go (but you'll still need to answer yes):
+
+cd D:\FAKEIMAGEPROJECT; python code\restructure_dataset.py; python code\train.py
+
+---
+
+
+COMMON MISTAKES TO AVOID
+═════════════════════════════════════════════════════════════════════════════════
+
+❌ WRONG: Running from code directory
+cd D:\FAKEIMAGEPROJECT\code
+python train.py
+→ This causes path errors!
+
+✅ RIGHT: Always run from project root
+cd D:\FAKEIMAGEPROJECT
+python code\train.py
+
+---
+
+❌ WRONG: Using relative paths
+cd code
+python train.py
+→ This won't find the dataset!
+
+✅ RIGHT: Use absolute path to script
+cd D:\FAKEIMAGEPROJECT
+python code\train.py
+
+---
+
+❌ WRONG: Using backslashes without quotes
+python code\train.py
+→ PowerShell might interpret \ differently
+
+✅ RIGHT: Use forward slashes or just write the path as is
+python code/train.py    (forward slash works)
+python code\train.py    (backslash works too)
+
+---
+
+❌ WRONG: Forgetting to answer "yes" to restructuring
+python code\restructure_dataset.py
+→ When asked "Continue with restructuring?", you MUST type "yes"
+
+✅ RIGHT: Type "yes" and press Enter
+Continue with restructuring? (yes/no): yes
+
+---
+
+
+TIMING REFERENCE
+═════════════════════════════════════════════════════════════════════════════════
+
+Step 1: Restructure dataset
+  Time: ~5 minutes
+  Size: Depends on total image file size
+
+Step 2: Train the model (5 epochs)
+  CPU (no GPU): 45-50 minutes (~9-10 min per epoch)
+  GPU (CUDA): 5-10 minutes (~1-2 min per epoch)
+  
+Total time: ~50-60 minutes on CPU, ~15 minutes on GPU
+
+If this is too slow:
+  - Reduce epochs (NUM_EPOCHS = 2)
+  - Reduce batch size (BATCH_SIZE = 16)
+  - Reduce image size (IMAGE_SIZE = 128)
+  - Use GPU instead of CPU
+
+---
+
+
+SUCCESS CHECKLIST
+═════════════════════════════════════════════════════════════════════════════════
+
+✓ Python 3.13 installed
+✓ PyTorch 2.10.0 installed
+✓ Project structure correct (dataset/, code/ folders exist)
+✓ Run: cd D:\FAKEIMAGEPROJECT
+✓ Run: python code\restructure_dataset.py
+✓ Answer "yes" when prompted
+✓ Run: python code\train.py
+✓ Watch accuracy increase over 5 epochs
+✓ See "Test Accuracy:" and "Best Model saved:" messages
+✓ Check for best_model.pth file in D:\FAKEIMAGEPROJECT
+
+If all ✓, you're done! 🎉
+
+---
+
+
+NEED HELP?
+═════════════════════════════════════════════════════════════════════════════════
+
+Read the following files in this order:
+
+1. QUICK_START.md         (2-3 minutes, fast overview)
+2. EXECUTION_GUIDE.txt    (10 minutes, detailed walkthrough)
+3. PROJECT_SUMMARY.txt    (5 minutes, technical reference)
+4. SETUP_GUIDE.txt        (Visual guide with diagrams)
+
+All files are in: D:\FAKEIMAGEPROJECT\
+
+---
+
+
+RECAP
+═════════════════════════════════════════════════════════════════════════════════
+
+You have everything needed to train a real vs fake face detector:
+
+✅ restructure_dataset.py  - Organizes your data
+✅ train.py               - Trains ResNet18 model
+✅ Documentation          - Guides you through everything
+✅ Best practices         - Proper path handling, error checking
+✅ Windows compatibility  - Tested on Windows PowerShell
+
+All you need to do is:
+
+  cd D:\FAKEIMAGEPROJECT
+  python code\restructure_dataset.py
+  python code\train.py
+
+That's it!
+
+═════════════════════════════════════════════════════════════════════════════════
