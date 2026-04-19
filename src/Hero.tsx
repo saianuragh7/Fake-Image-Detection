@@ -1,17 +1,63 @@
-import { VideoBackground } from './components/ui/video-background'
+import clsx, { type ClassValue } from 'clsx'
+import { motion } from 'motion/react'
+import { twMerge } from 'tailwind-merge'
+import { VideoBackground } from './components/ui/VideoBackground'
+
+const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden">
-      <div className="relative z-20 mx-auto max-w-4xl px-6 pb-32 pt-24 text-center md:pb-40 md:pt-32">
-        <h1 className="bg-gradient-to-r from-[#FA93FA] via-[#C967E8] to-[#983AD6] bg-clip-text text-4xl font-semibold tracking-tight text-transparent md:text-6xl">
+    <section className="relative flex min-h-screen flex-col overflow-hidden bg-[#010101]">
+      <motion.nav
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+        className="relative z-20 mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-8"
+      >
+        <div className="font-['Syne'] text-xl font-bold text-white">visualjoy®</div>
+        <div className="hidden items-center gap-7 font-['Outfit'] text-sm font-normal text-white/80 lg:flex">
+          {['Home', 'About Us', 'Services', 'Pricing', 'Case study', 'Blogs'].map((item) => (
+            <a
+              key={item}
+              href="#"
+              className={cn(
+                'transition-colors duration-300 hover:text-white',
+                item === 'Home' && 'text-white',
+              )}
+            >
+              {item}
+            </a>
+          ))}
+        </div>
+        <button className="rounded-full border border-white/30 px-5 py-2 font-['Outfit'] text-sm text-white transition-colors hover:border-white/70">
+          Contact Us
+        </button>
+      </motion.nav>
+
+      <div className="relative z-20 mx-auto w-full max-w-7xl px-6 pt-12 text-center md:pt-20">
+        <div className="font-['Outfit'] text-sm font-normal uppercase tracking-[0.24em] text-white/45">
+          Next-generation product studio
+        </div>
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
+          className="mt-6 font-['Syne'] text-[clamp(3rem,8vw,7rem)] leading-[1] font-extrabold tracking-[-0.02em] text-white"
+        >
           <span className="block">Your Vision</span>
-          <span className="block">Our Digital Reality</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-base text-white/80 md:text-lg">
-          Modern AI experiences powered by motion and design.
-        </p>
+          <span className="block">Our Digital Reality.</span>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.4, ease: 'easeOut' }}
+          className="mx-auto mt-6 max-w-[520px] font-['Outfit'] text-[clamp(1rem,2vw,1.25rem)] font-light text-white/[0.55]"
+        >
+          We turn bold ideas into modern designs that don't just look amazing, they
+          grow your business fast.
+        </motion.p>
       </div>
+
       <VideoBackground />
     </section>
   )
