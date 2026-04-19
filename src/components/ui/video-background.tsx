@@ -48,8 +48,8 @@ export function VideoBackground() {
       switchToMp4Fallback()
     }
 
-    const handleHlsError = (_event: string, data: ErrorData) => {
-      if (data.fatal) {
+    const handleHlsError = (event: string, data: ErrorData) => {
+      if (event === Hls.Events.ERROR && data.fatal) {
         recoverFromError()
       }
     }
