@@ -5,16 +5,22 @@ import { useEffect, useRef, useState } from 'react'
 const HLS_SRC =
   'https://customer-cbeadsgr09pnsezs.cloudflarestream.com/697945ca6b876878dba3b23fbd2f1561/manifest/video.m3u8'
 const MP4_FALLBACK = '/_videos/v1/f0c78f536d5f21a047fb7792723a36f9d647daa1'
+const RETRY_DELAY_MS = 1500
 
 export function VideoBackground() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const hlsRef = useRef<Hls | null>(null)
   const retryCountRef = useRef(0)
+  const retryTimeoutRef = useRef<number | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     const videoEl = videoRef.current
     if (!videoEl) return
+
+    const handleLoadedData = () => {
+      setIsLoaded(true)
+    }
 
     const attemptPlay = () => {
       void videoEl.play().catch(() => {})
@@ -26,7 +32,7 @@ export function VideoBackground() {
       if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
         videoEl.src = src
         videoEl.load()
-        videoEl.addEventListener('loadeddata', () => setIsLoaded(true), { once: true })
+        videoEl.addEventListener('loadeddata', handleLoadedData, { once: true })
         attemptPlay()
         return
       }
@@ -53,7 +59,10 @@ export function VideoBackground() {
             retryCountRef.current += 1
             hls.destroy()
             hlsRef.current = null
-            window.setTimeout(() => setupHls(HLS_SRC), 1500)
+            retryTimeoutRef.current = window.setTimeout(
+              () => setupHls(HLS_SRC),
+              RETRY_DELAY_MS,
+            )
             return
           }
 
@@ -76,6 +85,10 @@ export function VideoBackground() {
     setupHls(HLS_SRC)
 
     return () => {
+      videoEl.removeEventListener('loadeddata', handleLoadedData)
+      if (retryTimeoutRef.current) {
+        window.clearTimeout(retryTimeoutRef.current)
+      }
       hlsRef.current?.destroy()
       hlsRef.current = null
     }
