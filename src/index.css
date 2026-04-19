@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #010101;
+  --color-accent-from: #FA93FA;
+  --color-accent-via: #C967E8;
+  --color-accent-to: #983AD6;
+  --font-display: Syne, sans-serif;
+  --font-body: Outfit, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  background: #010101;
+}
