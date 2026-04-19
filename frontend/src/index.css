@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  font-family: "Inter", sans-serif;
+  background: #05050a;
+  --pt-bg: #05050a;
+  --pt-acid: #d4ff00;
+  --pt-blue: #1a1aff;
+  --pt-gold: #e6930a;
+  --pt-surface: rgba(9, 10, 20, 0.72);
+  --pt-border: rgba(255, 255, 255, 0.08);
+  --pt-muted: rgba(255, 255, 255, 0.7);
+}
+
+* {
+  box-sizing: border-box;
+  border-color: var(--pt-border);
+}
+
+html {
+  background: var(--pt-bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top, rgba(26, 26, 255, 0.12), transparent 36%),
+    radial-gradient(circle at 75% 18%, rgba(230, 147, 10, 0.08), transparent 28%),
+    linear-gradient(180deg, #05050a 0%, #060611 100%);
+  color: white;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(212, 255, 0, 0.25);
+  color: white;
+}
+
+.pt-panel {
+  border: 1px solid var(--pt-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%),
+    var(--pt-surface);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(18px);
+}
+
+.pt-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: center;
+}
+
+.pt-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: pt-marquee 24s linear infinite;
+}
+
+.pt-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes pt-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}

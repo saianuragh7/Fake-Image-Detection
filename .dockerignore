@@ -1,0 +1,24 @@
+.git
+.gitignore
+.venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+backend/
+training/
+real_vs_fake/
+dist/
+lt-out.log
+lt-err.log
+*.csv
+walkthrough.md
+Dockerfile.txt
+app.py.txt
+static/
+New folder/

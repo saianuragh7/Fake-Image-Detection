@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: pixeltruth
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
