@@ -3,7 +3,7 @@ services:
     name: pixeltruth
     runtime: docker
     dockerfilePath: ./Dockerfile
-    autoDeploy: true
+    autoDeploy: false
     healthCheckPath: /health
     envVars:
       - key: PYTHONUNBUFFERED
