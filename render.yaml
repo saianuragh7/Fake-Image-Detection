@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: deepfake-image-detector-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: MODEL_URL
+        sync: false
