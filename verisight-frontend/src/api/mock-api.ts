@@ -275,12 +275,5 @@ export async function mockApiFetch<T>(inputUrl: string, init: RequestInit): Prom
 export function shouldUseMockApi(inputUrl: string) {
   const mode = import.meta.env.VITE_USE_MOCK_API;
   if (mode === "true") return true;
-  if (mode === "false") return false;
-
-  try {
-    const url = new URL(inputUrl, window.location.origin);
-    return url.pathname.startsWith("/api/") && !import.meta.env.VITE_API_BASE_URL;
-  } catch {
-    return inputUrl.startsWith("/api/") && !import.meta.env.VITE_API_BASE_URL;
-  }
+  return false;
 }
