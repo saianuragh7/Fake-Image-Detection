@@ -1,0 +1,50 @@
+# Operating system and editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.venv/
+venv/
+env/
+
+# JavaScript
+node_modules/
+dist/
+build/
+.vite/
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Runtime data and caches
+.cache/
+cache/
+*.log
+scan_store.json
+
+# ML assets and datasets
+*.pth
+*.pt
+*.ckpt
+real_vs_fake/
+train.csv
+test.csv
+valid.csv
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
